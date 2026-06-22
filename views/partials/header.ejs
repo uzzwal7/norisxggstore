@@ -1,0 +1,107 @@
+  <!-- HEADER / NAVIGATION BAR -->
+  <header class="main-header">
+    <div class="header-container">
+
+      <!-- Brand Logo & Name -->
+      <a href="#" class="brand-logo-container" onclick="switchTab('home')">
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="neonCyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3.5" result="blur1" />
+              <feGaussianBlur stdDeviation="1" result="blur2" />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="neonPinkGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3.5" result="blur1" />
+              <feGaussianBlur stdDeviation="1" result="blur2" />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <rect x="5" y="5" width="90" height="90" rx="16" fill="#0b0f19" />
+          <path d="M42,34 C30,34 18,38 18,58 C18,70 26,76 34,76 C38,76 41,71 44,67 L46,67" fill="none" stroke="#00d2ff" stroke-width="3.5" filter="url(#neonCyanGlow)" stroke-linecap="round"/>
+          <path d="M26,54 H34 M30,50 V58" fill="none" stroke="#00d2ff" stroke-width="2.5" filter="url(#neonCyanGlow)" stroke-linecap="round"/>
+          <circle cx="38" cy="62" r="2.5" fill="#00d2ff" filter="url(#neonCyanGlow)"/>
+          <path d="M58,34 C70,34 82,38 82,58 C82,70 74,76 66,76 C62,76 59,71 56,67 L54,67" fill="none" stroke="#ff3366" stroke-width="3.5" filter="url(#neonPinkGlow)" stroke-linecap="round"/>
+          <circle cx="70" cy="50" r="2.2" fill="#ff3366" filter="url(#neonPinkGlow)"/>
+          <circle cx="76" cy="54" r="2.2" fill="#ff3366" filter="url(#neonPinkGlow)"/>
+          <circle cx="66" cy="58" r="2.2" fill="#ff3366" filter="url(#neonPinkGlow)"/>
+          <circle cx="72" cy="62" r="2.2" fill="#ff3366" filter="url(#neonPinkGlow)"/>
+          <path d="M46,42 L54,42 M46,67 L54,67" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">norisxgg <span class="brand-subname">store</span></span>
+      </a>
+
+      <!-- Right Header Actions -->
+      <div class="header-actions">
+
+        <!-- Search: icon-only button that expands into an input on click -->
+        <div class="search-box-container" id="search-box-container">
+          <input type="text" id="header-search-input" placeholder="Search games..." oninput="handleHeaderSearch(this.value)" onblur="collapseSearchIfEmpty()">
+          <button class="search-btn" onclick="toggleSearchBox()" title="Search">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+
+        <!-- Light/Dark Mode Switcher Button -->
+        <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-toggle-btn" title="Toggle Theme">
+          <i class="fas fa-moon moon-icon"></i>
+          <i class="fas fa-sun sun-icon"></i>
+        </button>
+
+        <!-- Notification Bell (visible once logged in) -->
+        <div class="notif-bell-container" id="notif-bell-container" style="display:none;">
+          <button class="notif-bell-btn" onclick="toggleNotifDropdown()" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+          </button>
+          <div class="notif-dropdown" id="notif-dropdown"></div>
+        </div>
+
+        <!-- Sign In Button -->
+        <button class="signin-btn" onclick="switchTab('auth')">
+          <i class="fa-regular fa-user"></i>
+          <span>Sign In</span>
+        </button>
+
+        <!-- Contact Us Action -->
+        <a href="#contact" class="contact-nav-link" onclick="scrollToFeedback()">Contact Us</a>
+
+        <!-- Three-Dot Menu -->
+        <div class="threedot-menu-container">
+          <button class="threedot-btn" onclick="toggleThreeDotMenu(event)">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+          <div class="threedot-dropdown" id="threedot-dropdown-box">
+            <h3>norisxgg store</h3>
+            <p class="tagline">Premium Game Activation & Wallet Cards</p>
+            <hr>
+            <!-- Shown only on small screens, where the top nav bar is hidden -->
+            <ul class="mobile-nav-links">
+              <li><a href="#home" onclick="switchTab('home'); toggleThreeDotMenu(event);"><i class="fas fa-house"></i> Home</a></li>
+              <li><a href="#shop" onclick="switchTab('shop'); toggleThreeDotMenu(event);"><i class="fas fa-store"></i> Shop</a></li>
+              <li><a href="#offer" onclick="switchTab('offer'); toggleThreeDotMenu(event);"><i class="fas fa-tags"></i> Offer</a></li>
+              <li><a href="#about" onclick="switchTab('about'); toggleThreeDotMenu(event);"><i class="fas fa-circle-info"></i> About Us</a></li>
+              <li id="mobile-nav-orders" style="display:none;"><a href="#orders" onclick="switchTab('orders'); toggleThreeDotMenu(event);"><i class="fas fa-box-open"></i> My Orders</a></li>
+            </ul>
+            <hr class="mobile-nav-divider">
+            <ul>
+              <li><i class="fas fa-bolt"></i> Instant Keys Delivery</li>
+              <li><i class="fas fa-lock"></i> 100% Encrypted Checkout</li>
+              <li><i class="fas fa-headset"></i> 24/7 Premium Help Desk</li>
+            </ul>
+            <hr>
+            <button class="dropdown-about-btn" onclick="switchTab('about'); toggleThreeDotMenu(event);">About the Store</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>

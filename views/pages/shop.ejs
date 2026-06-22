@@ -1,0 +1,75 @@
+    <!-- ==================== SHOP TAB ==================== -->
+    <section id="tab-shop" class="tab-view">
+      <div class="shop-page-container">
+
+        <!-- Shop Sidebar Filters -->
+        <aside class="shop-sidebar">
+
+          <div class="sidebar-widget sidebar-cart-widget">
+            <h3 class="widget-title">Shopping Cart</h3>
+            <div class="sidebar-cart-content" id="sidebar-cart-list">
+              <p class="empty-cart-text">No products in the cart.</p>
+            </div>
+          </div>
+
+          <div class="sidebar-widget search-widget">
+            <h3 class="widget-title">Search</h3>
+            <div class="sidebar-search-box">
+              <input type="text" id="sidebar-search-input" placeholder="Search products..." oninput="handleSidebarSearch(this.value)">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+          </div>
+
+          <div class="sidebar-widget price-filter-widget">
+            <h3 class="widget-title">Filter By Price</h3>
+            <div class="price-slider-container">
+              <div class="slider-track-box">
+                <input type="range" id="price-min" min="0" max="15900" value="0" class="price-slider-input" oninput="updatePriceFilterOutput()">
+                <input type="range" id="price-max" min="0" max="15900" value="15900" class="price-slider-input" oninput="updatePriceFilterOutput()">
+              </div>
+              <div class="price-filter-display">
+                <span>FILTER</span>
+                <span class="price-range-label">Price: <strong class="accent-text-blue" id="price-range-val">Rs. 0 — Rs. 15,900</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-widget categories-widget">
+            <h3 class="widget-title">Store Categories</h3>
+            <ul class="sidebar-categories-list">
+              <li><a href="#" class="sidebar-cat-link active" id="cat-all" onclick="filterByCategory('all')"><i class="fas fa-border-all"></i> All Products</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-valo" onclick="filterByCategory('Valo Points')"><i class="fas fa-chevron-right"></i> 1. Valo Points</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-cs2" onclick="filterByCategory('CS 2 Points')"><i class="fas fa-chevron-right"></i> 2. CS 2 Points</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-steam-acc" onclick="filterByCategory('Private Steam Accounts')"><i class="fas fa-chevron-right"></i> 3. Private Steam Accounts</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-steam-games" onclick="filterByCategory('Offline Steam Games')"><i class="fas fa-chevron-right"></i> 4. Offline Steam Games</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-pubg" onclick="filterByCategory('PUBG UC Store')"><i class="fas fa-chevron-right"></i> 5. PUBG UC Store</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-ff" onclick="filterByCategory('FreeFire Topup Store')"><i class="fas fa-chevron-right"></i> 6. Freefire Topup Store</a></li>
+              <li><a href="#" class="sidebar-cat-link" id="cat-aaa" onclick="filterByCategory('AAA Games')"><i class="fas fa-chevron-right"></i> 7. AAA Games</a></li>
+            </ul>
+          </div>
+
+          <div class="sidebar-widget related-products-widget">
+            <h3 class="widget-title">Related Products</h3>
+            <div class="related-products-list" id="related-products-container"></div>
+          </div>
+
+        </aside>
+
+        <div class="shop-main-content">
+          <div class="shop-header">
+            <div class="results-count" id="results-count-text">Showing all results</div>
+            <div class="shop-sort">
+              <select id="shop-sort-select" onchange="handleSortProducts(this.value)">
+                <option value="default">Sort by Popularity</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Average Rating</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="products-grid" id="shop-products-grid"></div>
+        </div>
+
+      </div>
+    </section>

@@ -1,0 +1,12 @@
+Put your payment wallet QR code images here.
+
+Filenames must be exactly:
+  esewa-qr.png
+  khalti-qr.png
+  imepay-qr.png
+
+These are shown to customers at checkout when they choose that payment
+method, so they can scan and pay, then upload a screenshot as proof.
+
+If a file is missing, the checkout screen will show a small placeholder
+message instead of breaking.

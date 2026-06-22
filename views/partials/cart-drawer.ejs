@@ -1,0 +1,37 @@
+  <!-- FLOATING BOTTOM SHOPPING CART OVERLAY -->
+  <div class="cart-floating-btn-container">
+    <button class="cart-floating-toggle-btn" onclick="toggleCartDrawer()">
+      <i class="fas fa-shopping-basket"></i>
+      <span class="cart-count-badge" id="floating-cart-badge">0</span>
+    </button>
+  </div>
+
+  <!-- CART DRAWER DRAWS FROM BOTTOM RIGHT -->
+  <div class="cart-drawer-backdrop" id="cart-backdrop" onclick="toggleCartDrawer()"></div>
+  <div class="cart-drawer-panel" id="cart-drawer-panel">
+    <div class="cart-drawer-header">
+      <h3><i class="fas fa-shopping-cart accent-text-blue"></i> Shopping Cart (<span id="cart-items-count">0</span>)</h3>
+      <button class="close-cart-btn" onclick="toggleCartDrawer()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="cart-drawer-body" id="cart-drawer-items-list"></div>
+
+    <div class="cart-drawer-footer" id="cart-drawer-footer-details" style="display: none;">
+      <div class="cart-promo-container">
+        <input type="text" id="promo-code-input" placeholder="Promo code (e.g. WORLD26)">
+        <button class="promo-apply-btn" onclick="applyPromoCode()">Apply</button>
+      </div>
+      <div class="cart-discount-row" id="cart-discount-row" style="display: none;">
+        <span>Promo Discount (<strong id="applied-code-label"></strong>):</span>
+        <span class="discount-price-val" id="cart-drawer-discount">-Rs. 0</span>
+      </div>
+
+      <div class="cart-total-row">
+        <span>Cart Total:</span>
+        <span class="total-price-val" id="cart-drawer-total">Rs. 0</span>
+      </div>
+      <button class="checkout-btn" onclick="handleCheckoutClick()">
+        <i class="fas fa-credit-card"></i> Proceed to Checkout
+      </button>
+    </div>
+  </div>

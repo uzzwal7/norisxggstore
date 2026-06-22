@@ -1,0 +1,13 @@
+Put your homepage carousel artwork here.
+
+Filenames must match what's set in config/carouselSlides.js:
+  slide1-fc26.jpg
+  slide2-residentevil.jpg
+  slide3-cs2.jpg
+
+Recommended: square images, at least 600x600px, JPG or PNG.
+If a file is missing, that slide will automatically show a fallback icon instead of breaking.
+
+To add a 4th (or more) slide: add a new image here, then add a new entry
+to the "carouselSlides" array in config/carouselSlides.js — the carousel
+will pick it up automatically, no other code changes needed.

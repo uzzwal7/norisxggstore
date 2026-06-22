@@ -1,0 +1,388 @@
+/* ==========================================================================
+   BUG-FREE HERO CAROUSEL SPLIT DESIGN
+   ========================================================================== */
+
+.hero-carousel-section {
+  margin-top: 90px;
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+  z-index: 1;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* Split Inner layout */
+.slide-split-inner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  height: 100%;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  align-items: center;
+  gap: 40px;
+}
+
+.slide-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 5;
+}
+
+.slide-graphic-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Spheres containing high-quality glowing vectors */
+.banner-graphic-sphere {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.grad-sphere-green {
+  background: radial-gradient(circle, rgba(0, 229, 118, 0.15) 0%, rgba(0, 229, 118, 0.01) 70%);
+  border: 1.5px solid rgba(0, 229, 118, 0.25);
+}
+
+.grad-sphere-red {
+  background: radial-gradient(circle, rgba(255, 51, 102, 0.15) 0%, rgba(255, 51, 102, 0.01) 70%);
+  border: 1.5px solid rgba(255, 51, 102, 0.25);
+}
+
+.grad-sphere-orange {
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.01) 70%);
+  border: 1.5px solid rgba(249, 115, 22, 0.25);
+}
+
+.banner-svg-art {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+/* Real artwork image, fills the same circular sphere the icon used to sit in */
+.banner-graphic-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+}
+
+.glowing-trophy-overlay {
+  font-size: 84px;
+  color: var(--color-gold);
+  filter: drop-shadow(0 0 15px rgba(217, 119, 6, 0.5));
+  animation: floatTrophy 4s ease-in-out infinite;
+  z-index: 3;
+}
+
+.glowing-trophy-overlay.horror-glow {
+  color: var(--color-pink);
+  filter: drop-shadow(0 0 15px rgba(255, 51, 102, 0.5));
+}
+
+.glowing-trophy-overlay.esports-glow {
+  color: var(--color-orange);
+  filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.5));
+}
+
+@keyframes floatTrophy {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.04); }
+}
+
+.mini-flag {
+  position: absolute;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flag-left {
+  top: 25%;
+  left: -20px;
+  color: var(--color-blue);
+}
+
+.flag-right {
+  bottom: 20%;
+  right: -20px;
+  color: var(--color-pink);
+}
+
+/* Background gradient highlights for split slides */
+.layout-fc26 {
+  background: radial-gradient(circle at 80% 50%, rgba(0, 136, 255, 0.04) 0%, transparent 60%);
+}
+.layout-re {
+  background: radial-gradient(circle at 80% 50%, rgba(255, 51, 102, 0.04) 0%, transparent 60%);
+}
+.layout-esports {
+  background: radial-gradient(circle at 80% 50%, rgba(249, 115, 22, 0.04) 0%, transparent 60%);
+}
+
+.badge-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.offer-tag {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 30px;
+}
+
+.gold-tag {
+  background-color: rgba(217, 119, 6, 0.1);
+  color: var(--color-gold);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.horror-tag {
+  background-color: rgba(255, 51, 102, 0.1);
+  color: var(--color-pink);
+  border: 1px solid rgba(255, 51, 102, 0.2);
+}
+
+.orange-tag {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: var(--color-orange);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.limited-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background-color: rgba(15, 23, 42, 0.04);
+  padding: 4px 12px;
+  border-radius: 30px;
+}
+
+html[data-theme="dark"] .limited-tag {
+  background-color: rgba(255,255,255,0.04);
+}
+
+.discount-badge-top {
+  background-color: var(--color-pink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 30px;
+}
+
+.slide-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 58px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text-primary);
+  letter-spacing: -1.5px;
+}
+
+.slide-subtitle {
+  font-size: 22px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.slide-desc {
+  color: var(--text-secondary);
+  font-size: 15px;
+  max-width: 600px;
+  line-height: 1.8;
+}
+
+.price-action-box {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+.slide-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-price .original-price {
+  font-size: 14px;
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.slide-price .current-price {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+}
+
+.slide-buy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 34px;
+  background-color: var(--color-blue);
+  color: #fff;
+  border-radius: 30px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(0, 136, 255, 0.2);
+}
+
+.slide-buy-btn:hover {
+  background-color: var(--color-blue-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 136, 255, 0.3);
+}
+
+.slide-buy-btn.btn-action-pink {
+  background-color: var(--color-pink);
+  box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+}
+.slide-buy-btn.btn-action-pink:hover {
+  background-color: var(--color-pink-hover);
+  box-shadow: 0 6px 20px rgba(255, 51, 102, 0.3);
+}
+
+.slide-buy-btn.btn-action-orange {
+  background-color: var(--color-orange);
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
+}
+.slide-buy-btn.btn-action-orange:hover {
+  background-color: var(--color-orange-hover);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
+}
+
+.slide-features {
+  display: flex;
+  gap: 24px;
+  margin-top: 15px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.slide-features span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slide-features span i {
+  color: var(--color-blue);
+}
+
+/* Arrows */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text-primary);
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+}
+
+.carousel-arrow:hover {
+  background-color: var(--color-blue);
+  border-color: var(--color-blue);
+  color: #fff;
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.carousel-arrow.prev { left: 40px; }
+.carousel-arrow.next { right: 40px; }
+
+/* Dots */
+.carousel-dots {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.carousel-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+html[data-theme="dark"] .carousel-dots .dot {
+  background-color: rgba(255,255,255,0.15);
+}
+
+.carousel-dots .dot.active {
+  width: 28px;
+  background-color: var(--color-blue);
+  border-radius: 30px;
+}

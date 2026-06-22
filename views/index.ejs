@@ -1,0 +1,47 @@
+<!--
+  ============================================================================
+  MAIN LAYOUT — this is the shell that wraps every page.
+  It just includes smaller files below. You almost never need to edit
+  this file — go edit the specific partial/page file instead:
+
+    views/partials/head.ejs       <title>, fonts, CSS links
+    views/partials/header.ejs     navbar, logo, search, sign-in button
+    views/partials/cart-drawer.ejs the slide-out shopping cart panel
+    views/partials/footer.ejs     bottom footer + payment badges
+
+    views/pages/home.ejs          Home tab (includes the carousel)
+    views/pages/shop.ejs          Shop tab
+    views/pages/offer.ejs         Offers tab
+    views/pages/about.ejs         About Us tab
+    views/pages/auth.ejs          Sign In / Register tab
+    views/pages/orders.ejs        My Orders tab
+
+    views/partials/carousel.ejs   the homepage slider (data comes from
+                                   config/carouselSlides.js)
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<%- include('partials/head') %>
+<body>
+
+  <%- include('partials/toast-container') %>
+  <%- include('partials/header') %>
+
+  <!-- MAIN SPA CONTENT AREA -->
+  <main class="spa-content-area">
+    <%- include('pages/home', { slides: slides }) %>
+    <%- include('pages/shop') %>
+    <%- include('pages/offer') %>
+    <%- include('pages/about') %>
+    <%- include('pages/auth') %>
+    <%- include('pages/orders') %>
+  </main>
+
+  <%- include('partials/cart-drawer') %>
+  <%- include('partials/footer') %>
+
+  <!-- Application Logic JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

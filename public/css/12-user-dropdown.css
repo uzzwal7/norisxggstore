@@ -1,0 +1,23 @@
+/* ==========================================================================
+   USER DROPDOWN MENU (shown when a logged-in user clicks the Sign In button)
+   ========================================================================== */
+.user-dropdown-menu {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: 12px; padding: 12px; min-width: 220px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2); z-index: 9999;
+}
+.user-dropdown-menu .udm-header {
+  display: flex; align-items: center; gap: 10px; padding: 4px 0 12px;
+}
+.user-dropdown-menu .udm-header i { font-size: 32px; color: var(--color-blue); }
+.user-dropdown-menu .udm-header strong { display: block; font-size: 14px; color: var(--text-primary); }
+.user-dropdown-menu .udm-header span  { font-size: 11px; color: var(--text-muted); }
+.user-dropdown-menu hr { border: none; border-top: 1px solid var(--border-color); margin: 6px 0; }
+.user-dropdown-menu button {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  background: none; border: none; padding: 10px 8px; border-radius: 8px;
+  color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all .2s;
+}
+.user-dropdown-menu button:hover { background: var(--bg-hover, rgba(0,136,255,0.1)); color: var(--color-blue); }
+.header-actions { position: relative; }

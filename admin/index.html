@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>norisxgg Admin Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0d1117; --bg-card: #161b22; --bg-hover: #21262d;
+      --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+      --blue: #1f6feb; --blue-hover: #388bfd; --green: #238636;
+      --red: #da3633; --yellow: #d29922; --purple: #8957e5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+    /* ── Login Screen ─────────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .login-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 40px; width: 100%; max-width: 380px;
+    }
+    .login-box h1 { font-size: 22px; margin-bottom: 4px; }
+    .login-box p  { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+    .login-box .field { margin-bottom: 16px; }
+    .login-box label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .login-box input {
+      width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 14px; outline: none;
+    }
+    .login-box input:focus { border-color: var(--blue); }
+    #login-error { color: #ff6b6b; font-size: 13px; margin-bottom: 12px; display: none; }
+
+    /* ── Sidebar ──────────────────────────────────────────── */
+    #sidebar {
+      width: 220px; min-height: 100vh; background: var(--bg-card);
+      border-right: 1px solid var(--border); display: flex; flex-direction: column;
+      position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 20px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-logo .logo-icon {
+      width: 36px; height: 36px; background: var(--blue); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .sidebar-logo h2 { font-size: 14px; font-weight: 700; }
+    .sidebar-logo span { font-size: 11px; color: var(--muted); display: block; }
+    .nav-section { padding: 12px 8px; flex: 1; overflow-y: auto; }
+    .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 12px 8px 6px; font-weight: 600; }
+    .nav-btn {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 10px 12px; border: none; background: none; color: var(--muted);
+      border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500;
+      text-align: left; transition: all .15s; margin-bottom: 2px;
+    }
+    .nav-btn:hover { background: var(--bg-hover); color: var(--text); }
+    .nav-btn.active { background: rgba(31,111,235,0.15); color: var(--blue-hover); }
+    .nav-btn i { width: 16px; text-align: center; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .admin-badge { font-size: 11px; color: var(--muted); }
+    .admin-badge strong { color: var(--text); display: block; font-size: 13px; }
+
+    /* ── Main Content ─────────────────────────────────────── */
+    #main { margin-left: 220px; flex: 1; padding: 0; min-height: 100vh; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      background: var(--bg-card); position: sticky; top: 0; z-index: 50;
+    }
+    .topbar h1 { font-size: 18px; font-weight: 700; }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .content { padding: 28px; }
+
+    /* ── Buttons ──────────────────────────────────────────── */
+    .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-hover); }
+    .btn-danger  { background: var(--red); color: white; }
+    .btn-danger:hover { background: #f85149; }
+    .btn-success { background: var(--green); color: white; }
+    .btn-warning { background: var(--yellow); color: white; }
+    .btn-ghost   { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { background: var(--bg-hover); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ── Stats Cards ─────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px; display: flex; align-items: flex-start; gap: 14px;
+    }
+    .stat-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .stat-val  { font-size: 26px; font-weight: 800; color: var(--text); }
+    .stat-lbl  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .ic-blue   { background: rgba(31,111,235,.15); color: var(--blue-hover); }
+    .ic-green  { background: rgba(35,134,54,.15);  color: #3fb950; }
+    .ic-purple { background: rgba(137,87,229,.15); color: #bc8cff; }
+    .ic-yellow { background: rgba(210,153,34,.15); color: #e3b341; }
+    .ic-red    { background: rgba(218,54,51,.15);  color: #ff7b72; }
+
+    /* ── Tables ──────────────────────────────────────────── */
+    .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .table-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .table-header h3 { font-size: 15px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border); text-align: left; background: var(--bg); }
+    td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+    .no-data { padding: 40px; text-align: center; color: var(--muted); font-size: 13px; }
+
+    /* ── Badges ──────────────────────────────────────────── */
+    .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
+    .badge-green  { background: rgba(35,134,54,.2);  color: #3fb950; }
+    .badge-blue   { background: rgba(31,111,235,.2); color: var(--blue-hover); }
+    .badge-yellow { background: rgba(210,153,34,.2); color: #e3b341; }
+    .badge-red    { background: rgba(218,54,51,.2);  color: #ff7b72; }
+    .badge-purple { background: rgba(137,87,229,.2); color: #bc8cff; }
+
+    /* ── Modal ───────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 9998; display: flex; align-items: center; justify-content: center;
+    }
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; width: 100%; max-width: 500px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .form-field { margin-bottom: 16px; }
+    .form-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .form-field input, .form-field select, .form-field textarea {
+      width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 13px; outline: none;
+    }
+    .form-field input:focus, .form-field select:focus { border-color: var(--blue); }
+    .form-field textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    /* ── Search/Filter Bar ───────────────────────────────── */
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filter-bar input, .filter-bar select {
+      padding: 8px 14px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 13px; outline: none;
+    }
+    .filter-bar input:focus, .filter-bar select:focus { border-color: var(--blue); }
+
+    /* ── Product image in table ───────────────────────────── */
+    .prod-img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: var(--bg); }
+
+    /* ── Tabs ─────────────────────────────────────────────── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Toast ───────────────────────────────────────────── */
+    #toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast-item {
+      background: var(--bg-card); border: 1px solid var(--border); padding: 12px 18px;
+      border-radius: 10px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      display: flex; align-items: center; gap: 8px; animation: slideIn .2s ease;
+    }
+    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .toast-item.success { border-left: 3px solid #3fb950; }
+    .toast-item.error   { border-left: 3px solid #ff7b72; }
+    .toast-item.info    { border-left: 3px solid var(--blue-hover); }
+
+    /* ── Spinner ─────────────────────────────────────────── */
+    .spinner { text-align: center; padding: 40px; color: var(--muted); }
+    .spinner i { font-size: 28px; }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      #sidebar { width: 60px; }
+      #sidebar .nav-btn span, #sidebar .nav-label, #sidebar .sidebar-logo h2,
+      #sidebar .sidebar-logo span, #sidebar .admin-badge { display: none; }
+      #main { margin-left: 60px; }
+      .content { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login Screen ─────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>🔧 Admin Panel</h1>
+    <p>norisxgg store — Restricted Access</p>
+    <div id="login-error"></div>
+    <div class="field">
+      <label>Email or Phone</label>
+      <input type="text" id="adm-identifier" placeholder="admin@norisxgg.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="adm-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;" onclick="adminLogin()">
+      <i class="fas fa-sign-in-alt"></i> Sign In to Admin
+    </button>
+  </div>
+</div>
+
+<!-- ── Sidebar ──────────────────────────────────────────── -->
+<div id="sidebar" style="display:none;">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fas fa-gamepad"></i></div>
+    <div>
+      <h2>norisxgg</h2>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Overview</div>
+    <button class="nav-btn active" onclick="showPage('dashboard')">
+      <i class="fas fa-chart-line"></i><span>Dashboard</span>
+    </button>
+
+    <div class="nav-label">Store</div>
+    <button class="nav-btn" onclick="showPage('products')">
+      <i class="fas fa-box"></i><span>Products</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('orders')">
+      <i class="fas fa-receipt"></i><span>Orders</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('promo')">
+      <i class="fas fa-tag"></i><span>Promo Codes</span>
+    </button>
+
+    <div class="nav-label">People</div>
+    <button class="nav-btn" onclick="showPage('users')">
+      <i class="fas fa-users"></i><span>Users</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('feedback')">
+      <i class="fas fa-star"></i><span>Feedback</span>
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <strong id="admin-name-display">Admin</strong>
+      <span>Administrator</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;" onclick="adminLogout()">
+      <i class="fas fa-sign-out-alt"></i><span> Logout</span>
+    </button>
+  </div>
+</div>
+
+<!-- ── Main Content ─────────────────────────────────────── -->
+<div id="main" style="display:none;">
+  <div class="topbar">
+    <h1 id="page-title">Dashboard</h1>
+    <div class="topbar-actions">
+      <span style="font-size:12px;color:var(--muted);">
+        <i class="fas fa-circle" style="color:#3fb950;font-size:8px;"></i>
+        Server Online
+      </span>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD ------------------------------------------ -->
+    <div id="page-dashboard" class="page active">
+      <div class="stats-grid" id="stats-grid">
+        <div class="spinner"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>
+      </div>
+      <div class="table-card" style="margin-top:0;">
+        <div class="table-header">
+          <h3>Recent Orders</h3>
+          <button class="btn btn-ghost btn-sm" onclick="showPage('orders')">View All <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div id="recent-orders-table"></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS ------------------------------------------- -->
+    <div id="page-products" class="page">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="filter-bar" style="margin:0;">
+          <input type="text" id="prod-search" placeholder="Search products..." oninput="filterProducts()">
+          <select id="prod-cat-filter" onchange="filterProducts()">
+            <option value="">All Categories</option>
+            <option>Valo Points</option><option>CS 2 Points</option>
+            <option>Private Steam Accounts</option><option>Offline Steam Games</option>
+            <option>PUBG UC Store</option><option>FreeFire Topup Store</option>
+            <option>AAA Games</option><option>Mystery Box</option><option>Steam Gift Card</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button>
+      </div>
+      <div class="table-card">
+        <div id="products-table"><div class="spinner"><i class="fas fa-spinner fa-spin"></i></div></div>
+      </div>
+    </div>
+
+    <!-- ORDERS --------------------------------------------- -->
+    <div id="page-orders" class="page">
+      <div class="filter-bar" style="margin-bottom:16px;">
+        <select id="order-status-filter" onchange="renderOrdersTable()">
+          <option value="">All Statuses</option>
+          <option>pending</option><option>processing</option>
+          <option>completed</option><option>cancelled</option>
+        </select>
+        <select id="order-payment-filter" onchange="renderOrdersTable()">
+          <option value="">All Payment</option>
+          <option>pending</option><option>paid</option><option>failed</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div id="orders-table"><div class="spinner"><i class="fas fa-spinner fa-spin"></i></div></div>
+      </div>
+    </div>
+
+    <!-- PROMO CODES ---------------------------------------- -->
+    <div id="page-promo" class="page">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="openPromoModal()"><i class="fas fa-plus"></i> New Promo Code</button>
+      </div>
+      <div class="table-card">
+        <div id="promo-table"><div class="spinner"><i class="fas fa-spinner fa-spin"></i></div></div>
+      </div>
+    </div>
+
+    <!-- USERS ---------------------------------------------- -->
+    <div id="page-users" class="page">
+      <div class="filter-bar" style="margin-bottom:16px;">
+        <input type="text" id="user-search" placeholder="Search by name or email..." oninput="filterUsers()">
+      </div>
+      <div class="table-card">
+        <div id="users-table"><div class="spinner"><i class="fas fa-spinner fa-spin"></i></div></div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK ------------------------------------------- -->
+    <div id="page-feedback" class="page">
+      <div class="table-card">
+        <div id="feedback-table"><div class="spinner"><i class="fas fa-spinner fa-spin"></i></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Toast Container ─────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ── Modal Container ─────────────────────────────────── -->
+<div id="modal-container"></div>
+
+<script>
+// ==========================================================
+// SECURITY: escape customer-submitted text (feedback, names, order
+// notes, etc.) before rendering it with innerHTML, to prevent a
+// malicious customer from injecting a script that runs in YOUR
+// admin browser when you view their order/feedback.
+// ==========================================================
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ==========================================================
+// CONFIG
+// ==========================================================
+const API = '/api';
+let adminToken = localStorage.getItem('norisxgg_admin_token') || null;
+let adminUser  = JSON.parse(localStorage.getItem('norisxgg_admin_user')) || null;
+
+// Cached data
+let allProducts = [], allOrders = [], allUsers = [], allFeedback = [], allPromos = [];
+
+function getH(auth=true) {
+  const h = { 'Content-Type': 'application/json' };
+  if (auth && adminToken) h['Authorization'] = `Bearer ${adminToken}`;
+  return h;
+}
+
+// ==========================================================
+// AUTH
+// ==========================================================
+window.addEventListener('DOMContentLoaded', () => {
+  if (adminToken && adminUser) showAdminPanel();
+  document.getElementById('adm-password').addEventListener('keydown', e => { if(e.key==='Enter') adminLogin(); });
+});
+
+async function adminLogin() {
+  const identifier = document.getElementById('adm-identifier').value.trim();
+  const password   = document.getElementById('adm-password').value;
+  const errEl      = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  try {
+    const res  = await fetch(`${API}/auth/login`, { method:'POST', headers:getH(false), body:JSON.stringify({identifier,password}) });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.message; errEl.style.display = 'block'; return; }
+    if (data.role !== 'admin') { errEl.textContent = 'Access denied. Admin only.'; errEl.style.display = 'block'; return; }
+
+    adminToken = data.token;
+    adminUser  = data;
+    localStorage.setItem('norisxgg_admin_token', adminToken);
+    localStorage.setItem('norisxgg_admin_user',  JSON.stringify(adminUser));
+    showAdminPanel();
+  } catch { errEl.textContent = 'Login failed. Is the server running?'; errEl.style.display = 'block'; }
+}
+
+function showAdminPanel() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('main').style.display = 'block';
+  document.getElementById('admin-name-display').textContent = adminUser?.username || 'Admin';
+  loadDashboard();
+}
+
+function adminLogout() {
+  adminToken = null; adminUser = null;
+  localStorage.removeItem('norisxgg_admin_token');
+  localStorage.removeItem('norisxgg_admin_user');
+  location.reload();
+}
+
+// ==========================================================
+// PAGE NAVIGATION
+// ==========================================================
+const pageTitles = { dashboard:'Dashboard', products:'Products', orders:'Orders', promo:'Promo Codes', users:'Users', feedback:'Customer Feedback' };
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${name}`)?.classList.add('active');
+  document.querySelectorAll(`.nav-btn`).forEach(b => { if(b.textContent.toLowerCase().includes(name.slice(0,4))) b.classList.add('active'); });
+  document.getElementById('page-title').textContent = pageTitles[name] || name;
+
+  const loaders = { dashboard:loadDashboard, products:loadProducts, orders:loadOrders, users:loadUsers, feedback:loadFeedback, promo:loadPromos };
+  if (loaders[name]) loaders[name]();
+}
+
+// ==========================================================
+// DASHBOARD
+// ==========================================================
+async function loadDashboard() {
+  try {
+    const res  = await fetch(`${API}/admin/dashboard`, { headers:getH() });
+    const data = await res.json();
+
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="stat-card"><div class="stat-icon ic-blue"><i class="fas fa-users"></i></div><div><div class="stat-val">${data.totalUsers}</div><div class="stat-lbl">Total Users</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-green"><i class="fas fa-box"></i></div><div><div class="stat-val">${data.totalProducts}</div><div class="stat-lbl">Active Products</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-purple"><i class="fas fa-receipt"></i></div><div><div class="stat-val">${data.totalOrders}</div><div class="stat-lbl">Total Orders</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-yellow"><i class="fas fa-rupee-sign"></i></div><div><div class="stat-val">Rs. ${(data.totalRevenue||0).toLocaleString()}</div><div class="stat-lbl">Total Revenue</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-red"><i class="fas fa-clock"></i></div><div><div class="stat-val">${data.pendingOrders}</div><div class="stat-lbl">Pending Orders</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-green"><i class="fas fa-star"></i></div><div><div class="stat-val">${data.totalFeedback}</div><div class="stat-lbl">Reviews</div></div></div>`;
+
+    const recentRows = (data.recentOrders||[]).map(o => `
+      <tr>
+        <td style="font-family:monospace;">#${o._id.slice(-8).toUpperCase()}</td>
+        <td>${esc(o.user?.username) || '—'}</td>
+        <td>Rs. ${(o.total||0).toLocaleString()}</td>
+        <td>${statusBadge(o.status)}</td>
+        <td>${payBadge(o.paymentStatus)}</td>
+        <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+      </tr>`).join('') || `<tr><td colspan="6" class="no-data">No orders yet</td></tr>`;
+
+    document.getElementById('recent-orders-table').innerHTML = `
+      <table><thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th></tr></thead>
+      <tbody>${recentRows}</tbody></table>`;
+  } catch(e) { toast('Failed to load dashboard', 'error'); }
+}
+
+// ==========================================================
+// PRODUCTS
+// ==========================================================
+async function loadProducts() {
+  try {
+    const res = await fetch(`${API}/products`, { headers:getH() });
+    allProducts = await res.json();
+    renderProductsTable();
+  } catch { toast('Failed to load products','error'); }
+}
+
+function filterProducts() { renderProductsTable(); }
+
+function renderProductsTable() {
+  const search = document.getElementById('prod-search')?.value.toLowerCase() || '';
+  const cat    = document.getElementById('prod-cat-filter')?.value || '';
+  const list   = allProducts.filter(p =>
+    (!search || p.name.toLowerCase().includes(search)) &&
+    (!cat || p.category === cat)
+  );
+
+  document.getElementById('products-table').innerHTML = `
+    <table>
+      <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${list.length ? list.map(p => `
+        <tr>
+          <td><img class="prod-img" src="../${p.image}" onerror="this.src='../images/1.png'" alt="${esc(p.name)}"></td>
+          <td style="font-weight:600;">${esc(p.name)}</td>
+          <td><span class="badge badge-blue">${p.category}</span></td>
+          <td>Rs. ${p.price.toLocaleString()}</td>
+          <td>${p.stock}</td>
+          <td>${p.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-red">Hidden</span>'}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick='openProductModal(${JSON.stringify(p)})'><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm" style="margin-left:4px;" onclick="deleteProduct('${p._id}','${p.name}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`).join('') : `<tr><td colspan="7" class="no-data">No products found</td></tr>`}
+      </tbody>
+    </table>`;
+}
+
+function openProductModal(p = null) {
+  const isEdit = !!p;
+  showModal(`
+    <h3>${isEdit ? 'Edit' : 'Add'} Product</h3>
+    <div class="form-row">
+      <div class="form-field"><label>Name</label><input id="pf-name" value="${p?.name||''}"></div>
+      <div class="form-field"><label>Category</label>
+        <select id="pf-cat">
+          ${['Valo Points','CS 2 Points','Private Steam Accounts','Offline Steam Games','PUBG UC Store','FreeFire Topup Store','AAA Games','Mystery Box','Steam Gift Card'].map(c=>`<option ${p?.category===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Price (Rs.)</label><input type="number" id="pf-price" value="${p?.price||''}"></div>
+      <div class="form-field"><label>Original Price (Rs.)</label><input type="number" id="pf-oprice" value="${p?.originalPrice||''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Rating (0-5)</label><input type="number" step="0.1" min="0" max="5" id="pf-rating" value="${p?.rating||4.5}"></div>
+      
+    </div>
+    <div class="form-field"><label>Image Path</label><input id="pf-image" value="${p?.image||'images/1.png'}" placeholder="images/1.png"></div>
+    
+    <div style="display:flex;gap:20px;margin-top:8px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <input type="checkbox" id="pf-sale" ${p?.sale?'checked':''}> Sale badge
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <input type="checkbox" id="pf-top" ${p?.isTopSelling?'checked':''}> Top Selling
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <input type="checkbox" id="pf-offer" ${p?.featuredInOffer?'checked':''}> Featured Offer
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <input type="checkbox" id="pf-active" ${p?.active!==false?'checked':''}> Active
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct('${p?._id||''}')">
+        <i class="fas fa-save"></i> ${isEdit?'Update':'Create'}
+      </button>
+    </div>`);
+}
+
+async function saveProduct(id) {
+  const body = {
+    name: document.getElementById('pf-name').value,
+    category: document.getElementById('pf-cat').value,
+    price: Number(document.getElementById('pf-price').value),
+    originalPrice: Number(document.getElementById('pf-oprice').value) || undefined,
+    rating: Number(document.getElementById('pf-rating').value),
+    
+    image: document.getElementById('pf-image').value,
+    
+    sale: document.getElementById('pf-sale').checked,
+    isTopSelling: document.getElementById('pf-top').checked,
+    featuredInOffer: document.getElementById('pf-offer').checked,
+    active: document.getElementById('pf-active').checked,
+  };
+
+  if (!body.name || !body.price) { toast('Name and price are required','error'); return; }
+
+  try {
+    const url = id ? `${API}/products/${id}` : `${API}/products`;
+    const res = await fetch(url, { method: id ? 'PUT' : 'POST', headers: getH(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) { toast(data.message,'error'); return; }
+    toast(id ? 'Product updated!' : 'Product created!');
+    closeModal();
+    loadProducts();
+  } catch { toast('Failed to save product','error'); }
+}
+
+async function deleteProduct(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try {
+    const res = await fetch(`${API}/products/${id}`, { method:'DELETE', headers:getH() });
+    if (!res.ok) { toast('Delete failed','error'); return; }
+    toast('Product deleted');
+    loadProducts();
+  } catch { toast('Delete failed','error'); }
+}
+
+// ==========================================================
+// ORDERS
+// ==========================================================
+async function loadOrders() {
+  try {
+    const res = await fetch(`${API}/orders`, { headers:getH() });
+    allOrders = await res.json();
+    renderOrdersTable();
+  } catch { toast('Failed to load orders','error'); }
+}
+
+function renderOrdersTable() {
+  const sf = document.getElementById('order-status-filter')?.value || '';
+  const pf = document.getElementById('order-payment-filter')?.value || '';
+  const list = allOrders.filter(o => (!sf||o.status===sf) && (!pf||o.paymentStatus===pf));
+
+  document.getElementById('orders-table').innerHTML = `
+    <table>
+      <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Method</th><th>Status</th><th>Payment</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>${list.length ? list.map(o => `
+        <tr>
+          <td style="font-family:monospace;">#${o._id.slice(-8).toUpperCase()}</td>
+          <td>${esc(o.user?.username)||'?'}<br><small style="color:var(--muted);">${esc(o.user?.email)||''}</small></td>
+          <td>${o.items?.length||0} item(s)</td>
+          <td style="font-weight:700;">Rs. ${(o.total||0).toLocaleString()}</td>
+          <td>${o.paymentMethod?.toUpperCase()}</td>
+          <td>${statusBadge(o.status)}</td>
+          <td>${payBadge(o.paymentStatus)}</td>
+          <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="openOrderModal(allOrders.find(x=>x._id==='${o._id}'))"><i class="fas fa-edit"></i></button>
+          </td>
+        </tr>`).join('') : `<tr><td colspan="9" class="no-data">No orders found</td></tr>`}
+      </tbody>
+    </table>`;
+}
+
+function openOrderModal(o) {
+  const stars = n => '★'.repeat(n) + '☆'.repeat(5-n);
+  showModal(`
+    <h3>Order #${o._id.slice(-8).toUpperCase()}</h3>
+    <div style="background:var(--bg);border-radius:8px;padding:14px;margin-bottom:16px;">
+      ${(o.items||[]).map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;"><span>${i.name} &times; ${i.qty}</span><span>Rs. ${(i.price*i.qty).toLocaleString()}</span></div>`).join('')}
+      ${o.discount>0?`<div style="color:#3fb950;display:flex;justify-content:space-between;font-size:13px;padding:4px 0;"><span>Promo (${o.promoCode})</span><span>-Rs. ${o.discount}</span></div>`:''}
+      ${o.deliveryCharge>0?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--muted);"><span>Delivery Fee</span><span>Rs. ${o.deliveryCharge}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;font-weight:700;padding-top:8px;border-top:1px solid var(--border);margin-top:6px;"><span>Total</span><span>Rs. ${(o.total||0).toLocaleString()}</span></div>
+    </div>
+
+    <!-- Customer-filled checkout details -->
+    <div style="background:var(--bg);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;">
+      <h4 style="font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;letter-spacing:.5px;">Delivery Info — send the game/code here</h4>
+      <p style="margin-bottom:6px;"><i class="fas fa-user" style="width:16px;color:var(--blue-hover);"></i> ${esc(o.user?.username) || '?'}</p>
+      <p style="margin-bottom:6px;"><i class="fas fa-envelope" style="width:16px;color:var(--blue-hover);"></i> <a href="mailto:${o.customerEmail||''}" style="color:var(--text);">${esc(o.customerEmail) || '—'}</a></p>
+      <p style="margin-bottom:6px;"><i class="fas fa-phone" style="width:16px;color:var(--blue-hover);"></i> <a href="https://wa.me/${(o.customerPhone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--text);">${esc(o.customerPhone) || '—'}</a></p>
+      <p style="margin-bottom:6px;"><i class="fas fa-location-dot" style="width:16px;color:var(--blue-hover);"></i> ${esc(o.customerAddress) || 'Not provided'}</p>
+      <p style="margin-bottom:0;"><i class="fas fa-star" style="width:16px;color:#e3b341;"></i> Customer rated: <span style="color:#e3b341;">${stars(o.customerRating || 0)}</span></p>
+      ${o.customerFeedback ? `<p style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-style:italic;color:var(--muted);">"${esc(o.customerFeedback)}"</p>` : ''}
+    </div>
+
+    ${o.paymentScreenshot ? `
+    <div style="margin-bottom:16px;">
+      <h4 style="font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;letter-spacing:.5px;">Payment Screenshot</h4>
+      <img src="${o.paymentScreenshot}" alt="Payment proof" style="width:100%;border-radius:8px;border:1px solid var(--border);cursor:zoom-in;" onclick="window.open(this.src,'_blank')">
+    </div>` : ''}
+
+    <div class="form-row">
+      <div class="form-field"><label>Order Status</label>
+        <select id="of-status">
+          ${['pending','processing','completed','cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-field"><label>Payment Status</label>
+        <select id="of-pay">
+          ${['pending','paid','failed'].map(s=>`<option ${o.paymentStatus===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="justify-content:space-between;">
+      <div>
+        ${o.status === 'completed' ? `<button class="btn btn-danger" onclick="deleteOrder('${o._id}')"><i class="fas fa-trash"></i> Delete Order</button>` : ''}
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-warning" onclick="openNotifyModal('${o.user?._id}','${o._id}')"><i class="fas fa-bell"></i> Notify Customer</button>
+        <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+        <button class="btn btn-primary" onclick="updateOrder('${o._id}')"><i class="fas fa-save"></i> Update</button>
+      </div>
+    </div>`);
+}
+
+async function deleteOrder(id) {
+  if (!confirm('Delete this completed order permanently? This cannot be undone.')) return;
+  try {
+    const res = await fetch(`${API}/orders/${id}`, { method:'DELETE', headers:getH() });
+    const data = await res.json();
+    if (!res.ok) { toast(data.message,'error'); return; }
+    toast('Order deleted');
+    closeModal();
+    loadOrders();
+  } catch { toast('Delete failed','error'); }
+}
+
+function openNotifyModal(userId, orderId) {
+  showModal(`
+    <h3>Notify Customer</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Send a quick update — e.g. "Game ID sent to your email" or report an issue.</p>
+    <div class="form-field"><label>Message Type</label>
+      <select id="nf-type">
+        <option value="success">Success — e.g. delivered</option>
+        <option value="info">Info — general update</option>
+        <option value="error">Error — something went wrong</option>
+      </select>
+    </div>
+    <div class="form-field"><label>Message</label>
+      <textarea id="nf-message" placeholder="e.g. Your game ID and password have been sent to your email!"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('nf-message').value='Your game/code has been sent to your email. Please check your inbox (and spam folder).'">Quick: Sent to email</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('nf-message').value='There was an issue delivering your order. Our team will contact you shortly.'">Quick: Delivery issue</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="openOrderModal(allOrders.find(o=>o._id==='${orderId}'))">Back</button>
+      <button class="btn btn-primary" onclick="sendNotification('${userId}','${orderId}')"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>`);
+}
+
+async function sendNotification(userId, orderId) {
+  const type    = document.getElementById('nf-type').value;
+  const message = document.getElementById('nf-message').value.trim();
+  if (!message) { toast('Write a message first','error'); return; }
+
+  try {
+    const res = await fetch(`${API}/notifications`, { method:'POST', headers:getH(), body:JSON.stringify({ userId, orderId, type, message }) });
+    if (!res.ok) { toast('Failed to send','error'); return; }
+    toast('Notification sent to customer!');
+    closeModal();
+  } catch { toast('Failed to send notification','error'); }
+}
+
+async function updateOrder(id) {
+  const status = document.getElementById('of-status').value;
+  const paymentStatus = document.getElementById('of-pay').value;
+  try {
+    const res = await fetch(`${API}/orders/${id}/status`, { method:'PUT', headers:getH(), body:JSON.stringify({status,paymentStatus}) });
+    if (!res.ok) { toast('Update failed','error'); return; }
+    toast('Order updated!');
+    closeModal();
+    loadOrders();
+  } catch { toast('Update failed','error'); }
+}
+
+
+// ==========================================================
+// PROMO CODES
+// ==========================================================
+async function loadPromos() {
+  try {
+    const res = await fetch(`${API}/promo`, { headers:getH() });
+    allPromos = await res.json();
+    renderPromoTable();
+  } catch { toast('Failed to load promos','error'); }
+}
+
+function renderPromoTable() {
+  document.getElementById('promo-table').innerHTML = `
+    <table>
+      <thead><tr><th>Code</th><th>Discount</th><th>Type</th><th>Uses</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${allPromos.length ? allPromos.map(p => `
+        <tr>
+          <td style="font-family:monospace;font-weight:700;">${p.code}</td>
+          <td>${p.discountType==='percent'?p.discount+'%':'Rs. '+p.discount}</td>
+          <td>${p.discountType}</td>
+          <td>${p.usageCount} / ${p.usageLimit}</td>
+          <td>${p.expiresAt ? new Date(p.expiresAt).toLocaleDateString() : 'Never'}</td>
+          <td>${p.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-red">Disabled</span>'}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="togglePromo('${p._id}',${p.active})">${p.active?'Disable':'Enable'}</button>
+            <button class="btn btn-danger btn-sm" style="margin-left:4px;" onclick="deletePromo('${p._id}','${p.code}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`).join('') : `<tr><td colspan="7" class="no-data">No promo codes yet</td></tr>`}
+      </tbody>
+    </table>`;
+}
+
+function openPromoModal() {
+  showModal(`
+    <h3>Create Promo Code</h3>
+    <div class="form-row">
+      <div class="form-field"><label>Code</label><input id="pmf-code" placeholder="e.g. SAVE50" style="text-transform:uppercase;"></div>
+      <div class="form-field"><label>Discount Amount</label><input type="number" id="pmf-disc" placeholder="100"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Type</label>
+        <select id="pmf-type"><option value="fixed">Fixed (Rs.)</option><option value="percent">Percent (%)</option></select>
+      </div>
+      <div class="form-field"><label>Usage Limit</label><input type="number" id="pmf-limit" value="100"></div>
+    </div>
+    <div class="form-field"><label>Expires At (optional)</label><input type="datetime-local" id="pmf-expires"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="createPromo()"><i class="fas fa-plus"></i> Create</button>
+    </div>`);
+}
+
+async function createPromo() {
+  const code    = document.getElementById('pmf-code').value.trim().toUpperCase();
+  const discount= Number(document.getElementById('pmf-disc').value);
+  const discountType = document.getElementById('pmf-type').value;
+  const usageLimit   = Number(document.getElementById('pmf-limit').value);
+  const expiresAt    = document.getElementById('pmf-expires').value;
+
+  if (!code || !discount) { toast('Code and discount are required','error'); return; }
+
+  try {
+    const res = await fetch(`${API}/promo`, { method:'POST', headers:getH(), body:JSON.stringify({code,discount,discountType,usageLimit,expiresAt:expiresAt||undefined}) });
+    const data = await res.json();
+    if (!res.ok) { toast(data.message,'error'); return; }
+    toast('Promo code created!');
+    closeModal();
+    loadPromos();
+  } catch { toast('Failed to create promo','error'); }
+}
+
+async function togglePromo(id, current) {
+  await fetch(`${API}/promo/${id}`, { method:'PUT', headers:getH(), body:JSON.stringify({active:!current}) });
+  toast(`Promo ${current?'disabled':'enabled'}`);
+  loadPromos();
+}
+
+async function deletePromo(id, code) {
+  if (!confirm(`Delete promo code "${code}"?`)) return;
+  await fetch(`${API}/promo/${id}`, { method:'DELETE', headers:getH() });
+  toast('Promo deleted');
+  loadPromos();
+}
+
+// ==========================================================
+// USERS
+// ==========================================================
+async function loadUsers() {
+  try {
+    const res = await fetch(`${API}/admin/users`, { headers:getH() });
+    allUsers = await res.json();
+    renderUsersTable();
+  } catch { toast('Failed to load users','error'); }
+}
+
+function filterUsers() { renderUsersTable(); }
+
+function renderUsersTable() {
+  const s = document.getElementById('user-search')?.value.toLowerCase() || '';
+  const list = allUsers.filter(u => !s || u.username.toLowerCase().includes(s) || u.email.toLowerCase().includes(s));
+
+  document.getElementById('users-table').innerHTML = `
+    <table>
+      <thead><tr><th>Username</th><th>Email</th><th>Phone</th><th>Country</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>${list.length ? list.map(u => `
+        <tr>
+          <td style="font-weight:600;">${esc(u.username)}</td>
+          <td>${esc(u.email)}</td>
+          <td>${esc(u.phone)}</td>
+          <td>${esc(u.country)}</td>
+          <td>${u.role==='admin'?'<span class="badge badge-purple">Admin</span>':'<span class="badge badge-blue">User</span>'}</td>
+          <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="changeRole('${u._id}','${u.role}','${u.username}')">
+              ${u.role==='admin'?'Make User':'Make Admin'}
+            </button>
+            <button class="btn btn-danger btn-sm" style="margin-left:4px;" onclick="deleteUser('${u._id}','${u.username}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>`).join('') : `<tr><td colspan="7" class="no-data">No users found</td></tr>`}
+      </tbody>
+    </table>`;
+}
+
+async function changeRole(id, current, name) {
+  const newRole = current === 'admin' ? 'user' : 'admin';
+  if (!confirm(`Change ${name}'s role to ${newRole}?`)) return;
+  const res = await fetch(`${API}/admin/users/${id}/role`, { method:'PUT', headers:getH(), body:JSON.stringify({role:newRole}) });
+  if (res.ok) { toast(`${name} is now ${newRole}`); loadUsers(); }
+  else toast('Failed to update role','error');
+}
+
+async function deleteUser(id, name) {
+  if (!confirm(`Delete user "${name}"? This is permanent.`)) return;
+  const res = await fetch(`${API}/admin/users/${id}`, { method:'DELETE', headers:getH() });
+  if (res.ok) { toast('User deleted'); loadUsers(); }
+  else toast('Delete failed','error');
+}
+
+// ==========================================================
+// FEEDBACK
+// ==========================================================
+async function loadFeedback() {
+  try {
+    const res = await fetch(`${API}/feedback`, { headers:getH() });
+    allFeedback = await res.json();
+    const stars = n => '★'.repeat(n) + '☆'.repeat(5-n);
+    document.getElementById('feedback-table').innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Rating</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>${allFeedback.length ? allFeedback.map(f => `
+          <tr>
+            <td style="font-weight:600;">${esc(f.name)}</td>
+            <td>${esc(f.email)}</td>
+            <td style="color:#e3b341;letter-spacing:1px;">${stars(f.rating)}</td>
+            <td style="max-width:300px;word-break:break-word;">${esc(f.message)}</td>
+            <td>${new Date(f.createdAt).toLocaleDateString()}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteFeedback('${f._id}')"><i class="fas fa-trash"></i></button></td>
+          </tr>`).join('') : `<tr><td colspan="6" class="no-data">No feedback yet</td></tr>`}
+        </tbody>
+      </table>`;
+  } catch { toast('Failed to load feedback','error'); }
+}
+
+async function deleteFeedback(id) {
+  if (!confirm('Delete this feedback?')) return;
+  await fetch(`${API}/feedback/${id}`, { method:'DELETE', headers:getH() });
+  toast('Feedback deleted');
+  loadFeedback();
+}
+
+// ==========================================================
+// HELPERS
+// ==========================================================
+function statusBadge(s) {
+  const cls = {pending:'badge-yellow', processing:'badge-blue', completed:'badge-green', cancelled:'badge-red'};
+  return `<span class="badge ${cls[s]||'badge-blue'}">${(s||'').toUpperCase()}</span>`;
+}
+function payBadge(s) {
+  const cls = {pending:'badge-yellow', paid:'badge-green', failed:'badge-red'};
+  return `<span class="badge ${cls[s]||'badge-yellow'}">${(s||'').toUpperCase()}</span>`;
+}
+
+function showModal(html) {
+  document.getElementById('modal-container').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">${html}</div>
+    </div>`;
+}
+function closeModal() { document.getElementById('modal-container').innerHTML = ''; }
+
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  const el = document.createElement('div');
+  el.className = `toast-item ${type}`;
+  const icons = {success:'fa-check-circle',error:'fa-times-circle',info:'fa-info-circle'};
+  el.innerHTML = `<i class="fas ${icons[type]||icons.success}" style="color:${type==='success'?'#3fb950':type==='error'?'#ff7b72':'var(--blue-hover)'}"></i> ${msg}`;
+  t.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>
