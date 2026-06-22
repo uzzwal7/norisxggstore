@@ -2,37 +2,7 @@
     <section id="tab-offer" class="tab-view">
       <div class="offer-page-container">
 
-        <div class="offer-hero-banner layout-fc26">
-          <div class="oh-content">
-            <span class="badge-accent"><i class="fas fa-globe-americas"></i> EXCLUSIVE WORLD CUP CAMPAIGN 2026</span>
-            <h2>FC26 World Cup Edition</h2>
-            <p class="desc">Unlock the standard pre-ordered edition of EA Sports FC26 at an unmatched price. Includes lifetime access credentials, offline + online gameplay support, and instant delivery.</p>
-
-            <div class="deal-highlight-row">
-              <div class="dh-item"><span class="dh-label">List Price</span><span class="dh-val strikethrough">Rs. 2,999</span></div>
-              <div class="dh-item"><span class="dh-label">Offer Price</span><span class="dh-val promo-price">Rs. 500</span></div>
-              <div class="dh-item"><span class="dh-label">Discount Code</span><span class="dh-val save-amt">83% OFF (Save Rs. 2,499)</span></div>
-            </div>
-
-            <button class="oh-buy-btn" onclick="buyItemDirectly('FC26 Standard Edition')">
-              <i class="fas fa-wallet"></i> Purchase World Cup Special Offer
-            </button>
-          </div>
-
-          <div class="oh-graphic-container">
-            <div class="fc26-graphic-card">
-              <div class="banner-graphic-sphere grad-sphere-green" style="width: 240px; height: 240px;">
-                <svg viewBox="0 0 100 100" class="banner-svg-art">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
-                  <path d="M20,50 Q50,20 80,50 Q50,80 20,50" fill="none" stroke="rgba(0,136,255,0.15)" stroke-width="1.5"/>
-                </svg>
-                <div class="glowing-trophy-overlay"><i class="fas fa-trophy"></i></div>
-              </div>
-              <div class="graphic-logo-tag">EA SPORTS FC26</div>
-              <div class="customer-stamp"><i class="fas fa-medal"></i> Best Seller</div>
-            </div>
-          </div>
-        </div>
+        <%- include('../partials/carousel', { slides: slides }) %>
 
         <div class="regular-offers-section">
           <div class="offer-section-title">
